@@ -95,9 +95,9 @@ export default function Page() {
               <br />
               <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>Maya Spacetime Identity</span>
             </h1>
-            <p style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign — a unique energetic signature that shapes how you think, feel, and move through&nbsp;life.</p>
+            <p style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign <br />a unique energetic signature that shapes how you think, feel, and move through life.</p>
             <p style={{ fontSize: "0.7rem", color: "rgba(255, 255, 255, 0.5)", letterSpacing: "3px", textTransform: "uppercase", marginTop: "15px" }}>Based on Maya Spacetime & Tzolk'in Calendar</p>
-            <div style={{ height: "1px", width: "40px", background: "rgba(252, 211, 77, 0.3)", margin: "0 auto" }} />
+            <div style={{ height: "1px", width: "60px", background: "rgba(252, 211, 77, 0.3)", margin: "10px auto 0" }} />
           </header>
 
           <div className={`card-container ${view === 'result' ? "flipped" : ""}`} style={cardContainerStyle(view)}>

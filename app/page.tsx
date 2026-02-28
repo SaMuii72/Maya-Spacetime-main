@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import SpaceBackground from "../components/SpaceBackground";
+import { getTzolkinDate } from "@/lib/mayan/tzolkin";
+import { WORK_LOVE_BY_SIGN } from "@/lib/mayan/workLoveBySign";
+import { generateMayanNarrative } from "@/lib/mayan/profileNarrative";
+import { highlightText } from "@/lib/mayan/highlightText";
 
 
 // 🎯 Cosmic Design Constants
@@ -15,8 +19,9 @@ export default function Page() {
   const [year, setYear] = useState("");
   const [error, setError] = useState("");
 
-  const [view, setView] = useState<'input' | 'result' | 'prediction' | 'dashboard'>('input');
+  const [view, setView] = useState<'input' | 'result' | 'prediction' | 'cosmicMap'>('input');
   const [isExiting, setIsExiting] = useState(false);
+  const [mayanResult, setMayanResult] = useState<any>(null);
 
   const validateDate = () => {
     setError("");
@@ -41,22 +46,39 @@ export default function Page() {
   };
 
   const handleReveal = () => {
-    if (validateDate()) setView('result');
+    const validated = validateDate();
+    if (validated) {
+      const dateString = `${validated.y}-${String(validated.m).padStart(2, '0')}-${String(validated.d).padStart(2, '0')}`;
+      const result = getTzolkinDate(dateString);
+      setMayanResult(result);
+      setView('result');
+    }
   };
 
   const handleToPrediction = () => {
     setIsExiting(true);
-    setTimeout(() => { setView('prediction'); setIsExiting(false); }, 800);
+    setTimeout(() => { setView('cosmicMap'); setIsExiting(false); }, 800);
   };
 
-  const handleToDashboard = () => {
+  const handleToCosmicMap = () => {
     setIsExiting(true);
-    setTimeout(() => { setView('dashboard'); setIsExiting(false); }, 800);
+    setTimeout(() => { setView('prediction'); setIsExiting(false); }, 800);
   };
 
   const handleReset = () => {
     setView('input');
     setDay(""); setMonth(""); setYear(""); setError("");
+    setMayanResult(null);
+  };
+
+  const getHighlightRules = () => {
+    if (!mayanResult) return [];
+    return [
+      { word: `Tone ${mayanResult.toneNumber}`, className: "text-amber-400 font-semibold" },
+      { word: mayanResult.tone.name, className: "text-amber-300 font-semibold" },
+      { word: mayanResult.sign.name, className: "text-teal-300 font-semibold" },
+      { word: mayanResult.sign.archetype, className: "text-teal-200 italic" }
+    ];
   };
 
   return (
@@ -68,11 +90,13 @@ export default function Page() {
         <div style={fullCenterStyle} className={isExiting ? "kin-card-exit" : "kin-card-entry"}>
           <header style={headerWrapperStyle(view)}>
             <span style={labelStyle}>Sacred Timekeeper</span>
-            <h1 style={titleStyle}>
-              <span style={{ textShadow: "0 0 15px rgba(255, 255, 255, 0.4)" }}>Maya</span>{" "}
-              <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>Cosmos</span>
+            <h1 style={{ ...titleStyle, fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
+              <span style={{ fontSize: "0.6em", textShadow: "0 0 15px rgba(255, 255, 255, 0.4)" }}>Discover Your</span>
+              <br />
+              <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>Maya Spacetime Identity</span>
             </h1>
-            <p style={descStyle}>"Your birth is a celestial coordinate. Trace your origin through the ancient Maya spacetime to reveal the sacred Kin that defines your existence in the weave of eternity."</p>
+            <p style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign — a unique energetic signature that shapes how you think, feel, and move through&nbsp;life.</p>
+            <p style={{ fontSize: "0.7rem", color: "rgba(255, 255, 255, 0.5)", letterSpacing: "3px", textTransform: "uppercase", marginTop: "15px" }}>Based on Maya Spacetime & Tzolk'in Calendar</p>
             <div style={{ height: "1px", width: "40px", background: "rgba(252, 211, 77, 0.3)", margin: "0 auto" }} />
           </header>
 
@@ -93,16 +117,17 @@ export default function Page() {
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div style={{ ...cardFaceStyle, transform: "rotateY(180deg)" }}>
               <div style={{ textAlign: "center" }}>
-                <span style={labelStyle}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "1.1rem" }}>Cosmic Identity</span>
                 <h2 style={{
-                  fontSize: "1.8rem",
+                  fontSize: "clamp(1.8rem, 4vw, 3rem)",
                   color: "#fcd34d",
                   margin: "10px 0",
-                  // 🎯 เพิ่มแสงฟุ้งเน้นๆ ให้ชื่อ Kin
                   textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
                   fontFamily: "'Cinzel', 'Georgia', serif"
-                }}>Blue Electric Eagle</h2>
-                <p style={{ color: "rgba(255,255,255,0.6)", marginBottom: "25px" }}>Kin 235 | Tone 3 | Sign: Eagle</p>
+                }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h2>
+                <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
+                  {mayanResult ? `Kin ${mayanResult.kin} | Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Kin 235 | Tone 3 | Sign: Eagle'}
+                </p>
                 <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                   <button onClick={handleReset} style={subButtonStyle}>New Date</button>
                   <button
@@ -111,12 +136,12 @@ export default function Page() {
                       ...subButtonStyle,
                       borderColor: "#fcd34d",
                       color: "#fcd34d",
-                      boxShadow: "0 0 15px rgba(252, 211, 77, 0.2)", // เพิ่มเงาเรืองแสงเบาๆ
+                      boxShadow: "0 0 15px rgba(252, 211, 77, 0.2)",
                       transition: "all 0.3s ease"
                     }}
                     className="predict-btn"
                   >
-                    Predictions →
+                    View Full Reading →
                   </button>
                 </div>
               </div>
@@ -137,70 +162,69 @@ export default function Page() {
             position: "absolute",
             inset: 0,
             zIndex: 20,
-            overflowY: "auto",      // 💡 เปิดให้หน้านี้ไถขึ้นลงได้อิสระ
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            padding: "60px 20px 100px 20px" // 💡 เว้นขอบล่าง 100px ให้เลื่อนพ้นปุ่ม ไม่จมขอบจอ
+            justifyContent: "center",
+            minHeight: "100vh"
           }}
         >
+          <div style={{ textAlign: "center", marginBottom: "30px" }}>
+            <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#fcd34d", marginBottom: "10px", fontFamily: "'Cinzel', serif" }}>
+              Your Life Path
+            </h2>
+            <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)" }}>
+              How your Maya signature influences love and career
+            </p>
+          </div>
           {/* 💡 ลบ height: 550px ออก และใช้ flexWrap ให้การ์ดต่อคิวกันเองเมื่อจอแคบ */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }}>
             
             <div className="card-love" style={{ flex: "1 1 340px", minHeight: "500px", display: "flex" }}>
               <PredictionCard icon="❤️" title="LOVE DESTINY" color="#fca5a5">
-                ความรักของ Blue Electric Eagle คือการมองหาความสัมพันธ์ที่ส่งเสริม "วิสัยทัศน์"
-                คุณต้องการคู่ชีวิตที่เปรียบเสมือนปีกที่ช่วยให้คุณโบยบินไปสู่เป้าหมายที่สูงขึ้น...
+                {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love || 
+                  "ความรักของ Blue Electric Eagle คือการมองหาความสัมพันธ์ที่ส่งเสริม \"วิสัยทัศน์\" คุณต้องการคู่ชีวิตที่เปรียบเสมือนปีกที่ช่วยให้คุณโบยบินไปสู่เป้าหมายที่สูงขึ้น..."}
               </PredictionCard>
             </div>
 
             <div className="card-career" style={{ flex: "1 1 340px", minHeight: "500px", display: "flex" }}>
               <PredictionCard icon="💼" title="CAREER PATH" color="#7dd3fc">
-                ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวม
-                และการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต...
+                {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.work || 
+                  "ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวมและการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต..."}
               </PredictionCard>
             </div>
 
           </div>
 
-          {/* 💡 ปุ่มกดจะถูกดันลงมาล่างสุดเสมอ และถ้าจอแคบ ปุ่มจะซ้อนกันเป็นแนวตั้งให้เอง */}
-          <footer style={{ marginTop: "60px", display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", width: "100%" }}>
-            <button onClick={() => setView('result')} style={{ ...resetFloatingBtn, minWidth: "220px", padding: "16px 20px" }}>← BACK TO KIN</button>
-            <button onClick={handleToDashboard} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "220px", padding: "16px 20px" }}>GO TO DASHBOARD →</button>
+          {/* 💡 ปุ่มกลับไปหน้าแรก */}
+          <footer style={{ marginTop: "40px", display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", width: "100%", padding: "0 20px" }}>
+            <button onClick={() => setView('cosmicMap')} style={{ ...resetFloatingBtn, minWidth: "220px", padding: "16px 20px" }}>← COSMIC MAP</button>
+            <button onClick={handleReset} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "220px", padding: "16px 20px" }}>NEW READING</button>
           </footer>
         </div>
       )}
 
-      {/* --- PHASE 3: DASHBOARD VIEW --- */}
-      {view === 'dashboard' && (
-        <main style={dashboardOverlayStyle} className="dashboard-entry">
+      {/* --- PHASE 3: COSMIC MAP VIEW --- */}
+      {view === 'cosmicMap' && (
+        <main style={cosmicMapOverlayStyle} className="cosmicMap-entry">
           <header style={{ textAlign: "center", marginBottom: "30px", zIndex: 40 }}>
             <span style={labelStyle}>MAYA SPACETIME DATE</span>
             <h2 style={{
-              fontSize: "2.8rem",
+              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
               color: "#fcd34d",
-              margin: "10px 0",
+              margin: "10px 0 5px 0",
               textShadow: "0 0 25px rgba(252, 211, 77, 0.7)",
               fontFamily: "'Cinzel', 'Georgia', serif"
-            }}>4 Eb' | 13 Galactic Tone</h2>
+            }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : '4 Eb\' | 13 Galactic Tone'}</h2>
+            <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
+              Your Tone shapes how you act. Your Sign defines who you are.
+            </p>
           </header>
 
-          <div style={dashboardGridStyle} className="dashboard-grid-mobile">
-            {/* การ์ดด้านซ้าย: Galaxy Tone */}
-            <DashboardColumn
-              title="GALAXY TONE"
-              icon="🌀"
-              color="#7dd3fc"
-              desc="พลังงานลำดับที่ 13 บอกวิธีขับเคลื่อนชีวิตของคุณในจักรวาล พลังแห่งการแผ่ขยายและการบรรลุจุดสูงสุดของรอบเวลา..."
-            />
-
-            {/* 🎯 ส่วนตรงกลาง: เว้นไว้ให้เพื่อนทำต่อ (โครงสร้างเดิม) */}
-            <section style={{ flex: 1.8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", maxWidth: "1400px", width: "100%", margin: "0 auto" }}>
+            
+            {/* วงกลมตรงกลาง */}
+            <section style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
               <div style={mayaCirclePlaceholder}>
                 <div style={innerCircle} className="maya-circle-mobile">
                   <div style={orbitSpinStyle} />
@@ -208,51 +232,67 @@ export default function Page() {
                 <div style={{ marginTop: "30px", textAlign: "center" }}>
                   <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: "10px" }}>
                     <span style={{ fontSize: "0.8rem", color: "#7dd3fc", letterSpacing: "3px" }}>KIN</span>
-                    <h1 style={{ fontSize: "4rem", color: "#fff", margin: "0", lineHeight: "1", textShadow: "0 0 20px rgba(255, 255, 255, 0.6)" }}>235</h1>
+                    <h1 style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)", color: "#fff", margin: "0", lineHeight: "1", textShadow: "0 0 20px rgba(255, 255, 255, 0.6)" }}>
+                      {mayanResult?.kin || 235}
+                    </h1>
                   </div>
-                  <h3 style={{ color: "#fcd34d", fontSize: "1.8rem", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
-                    BLUE ELECTRIC EAGLE
+                  <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
+                    {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
                   </h3>
                 </div>
               </div>
             </section>
 
-            {/* การ์ดด้านขวา: Nawal */}
-            <DashboardColumn
-              title="NAWAL SIGN"
-              icon="🦅"
-              color="#fcd34d"
-              desc="สัญลักษณ์ประจำวัน 20 นาวาล คือจิตวิญญาณดั้งเดิมที่บอกถึงตัวตนของคุณ Eagle คือผู้มองเห็นวิสัยทัศน์จากมุมสูง..."
-            />
+            {/* การ์ดทั้งสองด้านล่าง */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(20px, 5vw, 50px)", width: "100%", maxWidth: "1200px", justifyContent: "center", padding: "0 20px" }} className="cosmicMap-cards-container">
+              <div style={{ flex: "1 1 400px", maxWidth: "600px", display: "flex" }}>
+                <DashboardColumn
+                  title="GALAXY TONE"
+                  icon="🌀"
+                  color="#7dd3fc"
+                  desc={mayanResult ? generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).tone : "พลังงานลำดับที่ 13 บอกวิธีขับเคลื่อนชีวิตของคุณในจักรวาล พลังแห่งการแผ่ขยายและการบรรลุจุดสูงสุดของรอบเวลา..."}
+                  highlightRules={getHighlightRules()}
+                />
+              </div>
+
+              <div style={{ flex: "1 1 400px", maxWidth: "550px", display: "flex" }}>
+                <DashboardColumn
+                  title="NAWAL SIGN"
+                  icon="🦅"
+                  color="#fcd34d"
+                  desc={mayanResult ? generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).sign : "สัญลักษณ์ประจำวัน 20 นาวาล คือจิตวิญญาณดั้งเดิมที่บอกถึงตัวตนของคุณ Eagle คือผู้มองเห็นวิสัยทัศน์จากมุมสูง..."}
+                  highlightRules={getHighlightRules()}
+                />
+              </div>
+            </div>
+
           </div>
 
-          {/* ปรับ Footer หน้า Dashboard ให้ดูโปรและปุ่มไม่แย่งซีนกัน */}
+          {/* ปุ่มกดไปหน้า Love & Career */}
           <footer style={{ 
-            padding: "40px 0 80px 0", /* เพิ่มที่ว่างด้านล่าง 80px ไม่ให้ปุ่มจมขอบจอ */
+            padding: "40px 0 80px 0",
             textAlign: "center", 
             zIndex: 40, 
             display: "flex", 
-            flexDirection: "column", /* บังคับให้ปุ่มเรียงบนลงล่าง */
+            flexDirection: "column",
             gap: "20px", 
             alignItems: "center",
             width: "100%"
           }}>
-            {/* ปุ่มหลัก: กว้างและเด่น */}
-            <button onClick={() => setView('prediction')} style={{ ...resetFloatingBtn, minWidth: "260px", padding: "16px 20px" }}>
-              ← BACK TO PREDICTIONS
+            <button onClick={handleToCosmicMap} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "260px", padding: "16px 20px" }}>
+              LOVE & CAREER →
             </button>
             
-            {/* ปุ่มรอง: เปลี่ยนเป็นแค่ตัวหนังสือเรียบๆ (Text Link) */}
             <button 
               onClick={handleReset} 
               style={{ 
                 background: "transparent", 
                 border: "none", 
-                color: "rgba(255, 255, 255, 0.4)", /* สีเทาจางๆ */
+                color: "rgba(255, 255, 255, 0.4)",
                 fontSize: "0.75rem", 
                 letterSpacing: "3px", 
                 cursor: "pointer",
-                textDecoration: "underline", /* ขีดเส้นใต้ให้รู้ว่ากดได้ */
+                textDecoration: "underline",
                 textUnderlineOffset: "6px"
               }}
             >
@@ -263,21 +303,20 @@ export default function Page() {
       )}
       <style jsx global>{`
       /* เพิ่มใน style jsx global เดิม */
-.dashboard-card-fix {
+.cosmicMap-card-fix {
   max-height: 500px;
   height: 100%;
-  justify-content: flex-start !important; /* จัดให้ไอคอนอยู่ด้านบน */
+  justify-content: flex-start !important;
   transition: all 0.5s ease;
 }
 
-.dashboard-card-fix:hover {
+.cosmicMap-card-fix:hover {
   transform: translateY(-15px) scale(1.02);
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
   border-color: rgba(252, 211, 77, 0.3) !important;
 }
 
-/* ทำให้ Scrollbar ในหน้า Dashboard สวยขึ้น */
-.dashboard-card-fix .custom-scroll::-webkit-scrollbar {
+.cosmicMap-card-fix .custom-scroll::-webkit-scrollbar {
   width: 2px;
 }
   /* 1. การตั้งค่าพื้นฐานสำหรับหน้า Prediction */
@@ -304,7 +343,7 @@ export default function Page() {
       rgba(125, 211, 252, 0.2),
       transparent 30%
     );
-    animation: rotateGlow 8s linear infinite;
+    animation: rotateGlow 20s linear infinite;
     pointer-events: none;
     z-index: -1; /* ต้องอยู่หลัง Content */
   }
@@ -385,8 +424,8 @@ export default function Page() {
   @keyframes splitLeft { to { transform: translateX(-200px) rotate(-10deg); opacity: 0; } }
   @keyframes splitRight { to { transform: translateX(200px) rotate(10deg); opacity: 0; } }
 
-  .dashboard-entry { animation: dashboardFadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-  @keyframes dashboardFadeIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+  .cosmicMap-entry { animation: cosmicMapFadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+  @keyframes cosmicMapFadeIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
 
 
 /* --- จัดการหน้า 3 (Prediction) และส่วนที่ล้นในมือถือ --- */
@@ -443,8 +482,8 @@ export default function Page() {
     max-width: 300px;
   }
 
-  /* --- ส่วนนี้สำหรับหน้า Dashboard (Phase 3) ไม่ให้ล้น --- */
-  .dashboard-grid-mobile {
+  /* --- ส่วนนี้สำหรับหน้า Cosmic Map (Phase 3) ไม่ให้ล้น --- */
+  .cosmicMap-grid-mobile {
     flex-direction: column !important;
     height: auto !important;
     gap: 30px !important;
@@ -463,12 +502,21 @@ export default function Page() {
     height: 280px !important;
   }
 
-  .dashboard-card-fix {
+  .cosmicMap-card-fix {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 90% !important;
+    margin: 0 auto !important;
     height: auto !important;
   }
-}
+
+  /* Cosmic Map cards - ย่อขนาดในมือถือ */
+  .cosmicMap-cards-container {
+    max-width: 100% !important;
+  }
+
+  .cosmicMap-cards-container > div {
+    max-width: 90% !important;
+  }
 
 
 
@@ -488,7 +536,7 @@ export default function Page() {
 function InputItem({ label, value, onChange, hint, isMonth = false }: any) {
   return (
     <div style={{ flex: 1, minWidth: 0, textAlign: "center" }}>
-      <label style={{ display: "block", fontSize: "0.6rem", color: "rgba(125, 211, 252, 0.5)", marginBottom: "10px", letterSpacing: "2px", fontWeight: "bold" }}>{label}</label>
+      <label style={{ display: "block", fontSize: "1rem", color: "rgba(125, 211, 252, 0.5)", marginBottom: "10px", letterSpacing: "2px", fontWeight: "bold" }}>{label}</label>
       {isMonth ? (
         <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...selectStyle, color: value ? "#fff" : "rgba(255, 255, 255, 0.2)" }}>
           <option value="" disabled hidden>{hint}</option>
@@ -560,9 +608,9 @@ function PredictionCard({ icon, title, color, children }: any) {
   );
 }
 
-function DashboardColumn({ title, icon, desc, color = "#7dd3fc" }: any) {
+function DashboardColumn({ title, icon, desc, color = "#7dd3fc", highlightRules = [] }: any) {
   return (
-    <section style={flexibleColumnStyle} className="prediction-card-hover dashboard-card-fix">
+    <section style={flexibleColumnStyle} className="prediction-card-hover cosmicMap-card-fix">
       {/* ส่วน Icon ด้านบน */}
       <div style={{
         fontSize: "3rem",
@@ -585,7 +633,9 @@ function DashboardColumn({ title, icon, desc, color = "#7dd3fc" }: any) {
       }} />
 
       <div className="custom-scroll" style={{ overflowY: "auto", width: "100%", zIndex: 2 }}>
-        <p style={{ ...columnDesc, textAlign: "center", padding: "0 10px" }}>{desc}</p>
+        <p style={{ ...columnDesc, textAlign: "center", padding: "0 10px" }}>
+          {highlightRules.length > 0 ? highlightText(desc, highlightRules) : desc}
+        </p>
       </div>
     </section>
   );
@@ -640,8 +690,8 @@ const cardFaceStyle: React.CSSProperties = {
 const cardContainerStyle = (view: string): React.CSSProperties => ({
   position: "relative",
   width: "90%",
-  maxWidth: "350px",
-  height: "320px", // เพิ่มความสูงอีกนิดเพื่อความสมดุล
+  maxWidth: "500px",
+  height: "400px",
   transformStyle: "preserve-3d",
   transition: "transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), top 1.2s ease",
   // เมื่อเป็นหน้า result ให้เลื่อนขึ้นมาแทนที่ตำแหน่ง Header ที่หายไป
@@ -679,7 +729,16 @@ const predictionTextStyle: React.CSSProperties = {
 };
 
 const buttonStyle: React.CSSProperties = { width: "100%", padding: "16px", background: "transparent", border: "1px solid rgba(252, 211, 77, 0.5)", color: "#fcd34d", borderRadius: "4px", fontSize: "0.9rem", letterSpacing: "5px", cursor: "pointer", transition: "all 0.4s" };
-const subButtonStyle: React.CSSProperties = { background: "transparent", border: "1px solid rgba(255, 255, 255, 0.2)", color: "#fff", borderRadius: "4px", fontSize: "0.75rem", letterSpacing: "2px", padding: "10px 20px", cursor: "pointer" };
+const subButtonStyle: React.CSSProperties = { 
+  background: "transparent", 
+  border: "1px solid rgba(255, 255, 255, 0.2)", 
+  color: "#fff", 
+  borderRadius: "4px", 
+  fontSize: "0.9rem", 
+  letterSpacing: "2px", 
+  padding: "12px 24px", 
+  cursor: "pointer" 
+};
 const resetFloatingBtn: React.CSSProperties = {
   background: "rgba(255, 255, 255, 0.03)",
   backdropFilter: "blur(10px)",
@@ -695,7 +754,7 @@ const resetFloatingBtn: React.CSSProperties = {
   minWidth: "220px", // บังคับให้ปุ่มกว้างเท่ากัน ดูเป็นระเบียบในมือถือ
   textAlign: "center"
 };
-const dashboardOverlayStyle: React.CSSProperties = { 
+const cosmicMapOverlayStyle: React.CSSProperties = { 
   position: "absolute", 
   inset: 0, 
   zIndex: 30, 
@@ -705,7 +764,7 @@ const dashboardOverlayStyle: React.CSSProperties = {
   justifyContent: "flex-start", // เปลี่ยนจาก center เป็น start เพื่อให้ไถขึ้นได้
   overflowY: "auto" 
 };
-const dashboardGridStyle: React.CSSProperties = { 
+const cosmicMapGridStyle: React.CSSProperties = { 
   display: "flex", 
   flex: "none", // เปลี่ยนจาก 1 เป็น none เพื่อให้ความสูงเป็นไปตามเนื้อหา
   gap: "4vw", 
@@ -716,14 +775,31 @@ const dashboardGridStyle: React.CSSProperties = {
   zIndex: 40, 
   padding: "0 20px" 
 };
-const flexibleColumnStyle: React.CSSProperties = { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 30px", background: GLASS_BG, backdropFilter: GLASS_BLUR, borderRadius: "24px", border: GLASS_BORDER, maxWidth: "340px" };
+const flexibleColumnStyle: React.CSSProperties = { 
+  flex: 1, 
+  display: "flex", 
+  flexDirection: "column", 
+  alignItems: "center", 
+  padding: "40px 30px", 
+  background: GLASS_BG, 
+  backdropFilter: GLASS_BLUR, 
+  borderRadius: "24px", 
+  border: GLASS_BORDER, 
+  width: "100%",  // ใช้ความกว้างเต็ม
+  minHeight: "350px"
+};
 const logoPlaceholderRed: React.CSSProperties = { width: "80px", height: "80px", background: "rgba(239, 68, 68, 0.1)", borderRadius: "50%", border: "1px solid #ef4444", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", color: "#ef4444", marginBottom: "20px" };
 const columnTitle: React.CSSProperties = { fontSize: "1rem", color: "#7dd3fc", letterSpacing: "3px", marginBottom: "15px" };
-const columnDesc: React.CSSProperties = { fontSize: "0.85rem", color: "rgba(255,255,255,0.5)", lineHeight: "1.7", textAlign: "center" };
+const columnDesc: React.CSSProperties = { 
+  fontSize: "1rem",  // เพิ่มจาก 0.85rem เป็น 1rem
+  color: "rgba(255,255,255,0.7)",  // เพิ่มความสว่าง
+  lineHeight: "1.8", 
+  textAlign: "center" 
+};
 const mayaCirclePlaceholder: React.CSSProperties = { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1 };
 const innerCircle: React.CSSProperties = { 
-  width: "min(80vw, 480px)", // ใช้ 80vw เพื่อให้เล็กลงในมือถือ
-  height: "min(80vw, 480px)", 
+  width: "min(60vw, 360px)", // ย่อจาก 80vw, 480px เป็น 60vw, 360px
+  height: "min(60vw, 360px)", 
   borderRadius: "50%", 
   border: "2px solid rgba(252, 211, 77, 0.05)", 
   display: "flex", 
@@ -740,11 +816,10 @@ const inputStyle: React.CSSProperties = {
   borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
   padding: "10px 0",
   color: "#fff",
-  fontSize: "1.2rem",
+  fontSize: "2rem",
   textAlign: "center",
   outline: "none",
   fontFamily: "monospace",
-  // 🎯 เพิ่มบรรทัดนี้เข้าไปครับ
   textShadow: "0 0 10px rgba(255, 255, 255, 0.3)"
 };
 const selectStyle: React.CSSProperties = { ...inputStyle, appearance: "none", cursor: "pointer" };

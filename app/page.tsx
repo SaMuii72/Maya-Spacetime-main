@@ -95,7 +95,7 @@ export default function Page() {
               <br />
               <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>Maya Spacetime Identity</span>
             </h1>
-            <p style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign <br />a unique energetic signature that shapes how you think, feel, and move through life.</p>
+            <p className="desc-text" style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign <br className="hide-on-small" />a unique energetic signature that shapes how you think, feel, and move through life.</p>
             <p style={{ fontSize: "0.7rem", color: "rgba(255, 255, 255, 0.5)", letterSpacing: "3px", textTransform: "uppercase", marginTop: "15px" }}>Based on Maya Spacetime & Tzolk'in Calendar</p>
             <div style={{ height: "1px", width: "60px", background: "rgba(252, 211, 77, 0.3)", margin: "10px auto 0" }} />
           </header>
@@ -311,9 +311,9 @@ export default function Page() {
 }
 
 .cosmicMap-card-fix:hover {
-  transform: translateY(-15px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  border-color: rgba(252, 211, 77, 0.3) !important;
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  border-color: rgba(252, 211, 77, 0.2) !important;
 }
 
 .cosmicMap-card-fix .custom-scroll::-webkit-scrollbar {
@@ -327,37 +327,16 @@ export default function Page() {
     z-index: 1;
   }
 
-  /* 2. แสงวิ่งรอบการ์ด (The Cosmic Aura) */
+  /* 2. แสงวิ่งรอบการ์ด (The Cosmic Aura) - ปิดการใช้งาน */
   .prediction-card-hover::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    /* ปรับสีให้สว่างขึ้นเพื่อให้เห็นชัดบนจอ */
-    background: conic-gradient(
-      transparent, 
-      rgba(252, 211, 77, 0.2), 
-      transparent 15%,
-      rgba(125, 211, 252, 0.2),
-      transparent 30%
-    );
-    animation: rotateGlow 20s linear infinite;
-    pointer-events: none;
-    z-index: -1; /* ต้องอยู่หลัง Content */
+    display: none;
   }
 
-  @keyframes rotateGlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* 3. เอฟเฟกต์เวลาเอาเมาส์ไปวาง */
+  /* 3. เอฟเฟกต์เวลาเอาเมาส์ไปวาง - ลดการเคลื่อนไหว */
   .card-love:hover, .card-career:hover {
-    transform: translateY(-12px) scale(1.03) !important;
-    filter: brightness(1.2);
-    box-shadow: 0 15px 40px rgba(252, 211, 77, 0.15);
+    transform: translateY(-5px) !important;
+    filter: brightness(1.1);
+    box-shadow: 0 10px 30px rgba(252, 211, 77, 0.1);
   }
 
   /* 4. การเลื่อนขึ้นของข้อความ (Text Entrance) */
@@ -398,6 +377,13 @@ export default function Page() {
 
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  
+  /* Hide line break on small screens */
+  @media (max-width: 768px) {
+    .hide-on-small {
+      display: none;
+    }
+  }
   
   /* Page Transitions */
   .kin-card-entry { 

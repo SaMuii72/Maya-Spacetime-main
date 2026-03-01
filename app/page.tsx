@@ -125,8 +125,8 @@ export default function Page() {
             </div>
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
-            <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ textAlign: "center" }}>
+            <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center", padding: "40px 0" }}>
                 <span style={{ ...labelStyle, fontSize: "1.5rem" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
@@ -280,22 +280,17 @@ export default function Page() {
             </div>
           </section>
 
-          {/* 💡 ลบ height: 550px ออก และใช้ flexWrap ให้การ์ดต่อคิวกันเองเมื่อจอแคบ */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }}>
             
-            <div className="card-love" style={{ flex: "1 1 340px", minHeight: "500px", display: "flex" }}>
-              <PredictionCard icon="❤️" title="LOVE DESTINY" color="#fca5a5">
-                {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love || 
-                  "ความรักของ Blue Electric Eagle คือการมองหาความสัมพันธ์ที่ส่งเสริม \"วิสัยทัศน์\" คุณต้องการคู่ชีวิตที่เปรียบเสมือนปีกที่ช่วยให้คุณโบยบินไปสู่เป้าหมายที่สูงขึ้น..."}
-              </PredictionCard>
-            </div>
+            <PredictionCard icon="❤️" title="LOVE DESTINY" color="#fca5a5">
+              {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love || 
+                "ความรักของ Blue Electric Eagle คือการมองหาความสัมพันธ์ที่ส่งเสริม \"วิสัยทัศน์\" คุณต้องการคู่ชีวิตที่เปรียบเสมือนปีกที่ช่วยให้คุณโบยบินไปสู่เป้าหมายที่สูงขึ้น..."}
+            </PredictionCard>
 
-            <div className="card-career" style={{ flex: "1 1 340px", minHeight: "500px", display: "flex" }}>
-              <PredictionCard icon="💼" title="CAREER PATH" color="#7dd3fc">
-                {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.work || 
-                  "ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวมและการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต..."}
-              </PredictionCard>
-            </div>
+            <PredictionCard icon="💼" title="CAREER PATH" color="#7dd3fc">
+              {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.work || 
+                "ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวมและการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต..."}
+            </PredictionCard>
 
           </div>
 
@@ -429,6 +424,8 @@ export default function Page() {
   /* 3. เอฟเฟกต์เวลาเอาเมาส์ไปวาง - ลดการเคลื่อนไหว */
   .card-love, .card-career, .cosmicMap-card-fix {
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    flex: 1 1 340px;
+    max-width: 600px;
   }
 
   .card-love:hover, .card-career:hover, .cosmicMap-card-fix:hover {
@@ -651,61 +648,33 @@ function InputItem({ label, value, onChange, hint, isMonth = false }: any) {
 }
 function PredictionCard({ icon, title, color, children }: any) {
   return (
-    <div style={predictionCardStyle} className="prediction-card-hover">
-      {/* 1. Watermark Icon (สัญลักษณ์จางๆ วางไว้เลเยอร์หลังสุด) */}
+    <section style={flexibleColumnStyle} className="prediction-card-hover cosmicMap-card-fix">
       <div style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: "15rem",
-        opacity: 0.04,
-        pointerEvents: "none",
-        zIndex: 0,
-        filter: "blur(5px)"
+        fontSize: "3rem",
+        marginBottom: "20px",
+        filter: `drop-shadow(0 0 15px ${color})`,
+        zIndex: 2
       }}>
         {icon}
       </div>
 
-      {/* 2. Main Content (วางไว้บน zIndex: 1 เพื่อไม่ให้แสงวิ่งบัง) */}
+      <h3 style={{ ...columnTitle, color, zIndex: 2 }}>{title}</h3>
+
       <div style={{
-        position: "relative",
-        zIndex: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        height: "100%",
-        width: "100%"
-      }}>
+        height: "1px",
+        width: "40px",
+        background: color,
+        opacity: 0.3,
+        marginBottom: "20px",
+        zIndex: 2
+      }} />
 
-        {/* Icon ด้านบน */}
-        <div style={predictionIconStyle}>{icon}</div>
-
-        {/* หัวข้อ พร้อมแสงฟุ้งตามสีที่ส่งมา */}
-        <h3 style={{
-          color,
-          fontSize: "1.6rem",
-          letterSpacing: "4px",
-          marginBottom: "20px",
-          textShadow: `0 0 20px ${color}60, 0 0 5px ${color}`,
-          fontFamily: "'Cinzel', serif",
-          textAlign: "center"
-        }}>
-          {title}
-        </h3>
-
-        {/* ส่วนเนื้อหาพร้อม Scrollbar แบบ Custom */}
-        <div className="custom-scroll" style={scrollContentStyle}>
-          <p style={{
-            ...predictionTextStyle,
-            padding: "0 10px",
-            animation: "floatUp 1.2s ease-out forwards" // บังคับใช้ animation ตรงนี้อีกที
-          }}>
-            {children}
-          </p>
-        </div>
+      <div className="custom-scroll" style={{ overflowY: "auto", width: "100%", zIndex: 2 }}>
+        <p style={{ ...columnDesc, textAlign: "center", padding: "0 10px" }}>
+          {children}
+        </p>
       </div>
-    </div>
+    </section>
   );
 }
 

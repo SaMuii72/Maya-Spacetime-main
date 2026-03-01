@@ -424,8 +424,15 @@ export default function Page() {
   /* 3. เอฟเฟกต์เวลาเอาเมาส์ไปวาง - ลดการเคลื่อนไหว */
   .card-love, .card-career, .cosmicMap-card-fix {
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    flex: 1 1 340px;
+    flex: 1 1 400px;
     max-width: 600px;
+  }
+
+  @media (max-width: 768px) {
+    .card-love, .card-career {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
   }
 
   .card-love:hover, .card-career:hover, .cosmicMap-card-fix:hover {

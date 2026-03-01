@@ -22,6 +22,7 @@ export function getTzolkinDate(dateString: string) {
     kin,
     toneNumber: toneIndex,
     tone: TONES[toneIndex as keyof typeof TONES],
+    signNumber: signIndex + 1,
     sign: SIGNS[signIndex]
   };
 }

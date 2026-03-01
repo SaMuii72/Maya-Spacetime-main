@@ -124,7 +124,7 @@ export default function Page() {
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center" }}>
-                <span style={{ ...labelStyle, fontSize: "1.5rem", marginTop: "10px" }}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "10px" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
                 <div style={{position: "relative"}}>
@@ -137,21 +137,21 @@ export default function Page() {
                       size="large"
                     />
                   )}
-                  <div style={{position: "relative", top: "20px"}}>
+                  <div style={{position: "relative", top: "10px"}}>
                     <h4 style={{
-                      fontSize: "clamp(1.5rem, 4vw, 2.2rem)",
+                      fontSize: "clamp(1.3rem, 3.5vw, 2.2rem)",
                       color: "#fcd34d",
                       margin: "10px 0",
                       textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
                       fontFamily: "'Cinzel', 'Georgia', serif",
                     }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
-                    <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "15px", fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
+                    <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "10px", fontSize: "clamp(0.85rem, 2vw, 1.4rem)" }}>
                       {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
                     </p>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "10px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "15px", marginBottom: "5px", flexWrap: "wrap" }}>
                     <button onClick={handleReset} style={subButtonStyle}>New Date</button>
                     <button
                       onClick={handleToPrediction}
@@ -305,6 +305,7 @@ export default function Page() {
       {/* --- PHASE 3: COSMIC MAP VIEW --- */}
       {view === 'cosmicMap' && (
         <main style={cosmicMapOverlayStyle} className="cosmicMap-entry">
+          <div style={{ paddingTop: "20px" }}>
           <header style={{ textAlign: "center", marginBottom: "30px", zIndex: 40 }}>
             <span style={labelStyle}>MAYA SPACETIME DATE</span>
             <h2 style={{
@@ -395,6 +396,7 @@ export default function Page() {
               START NEW DESTINY
             </button>
           </footer>
+          </div>
         </main>
       )}
       <style jsx global>{`
@@ -752,7 +754,7 @@ const inputCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 500px)",
-  height: "min(70vh, 400px)",
+  height: "min(60vh, 400px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 
@@ -773,11 +775,11 @@ const resultCardStyle: React.CSSProperties = {
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 700px)",
   height: "auto",
-  maxHeight: "95vh",
+  maxHeight: "90vh",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 
-  padding: "15px", 
+  padding: "10px", 
   border: GLASS_BORDER, 
   backfaceVisibility: "hidden",
   display: "flex", 
@@ -860,7 +862,7 @@ const cosmicMapOverlayStyle: React.CSSProperties = {
   display: "flex", 
   flexDirection: "column", 
   padding: "20px 2vw", 
-  justifyContent: "center",
+  justifyContent: "flex-start",
   overflowY: "auto" 
 };
 const cosmicMapGridStyle: React.CSSProperties = { 

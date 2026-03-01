@@ -247,9 +247,9 @@ export default function Page() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "flex-start",
+            justifyContent: "center",
             minHeight: "100vh",
-            padding: "60px 20px 40px 20px",
+            padding: "20px",
             overflowY: "auto"
           }}
         >
@@ -776,14 +776,15 @@ const resultCardStyle: React.CSSProperties = {
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 
-  padding: "30px 40px", 
+  padding: "20px", 
   border: GLASS_BORDER, 
   backfaceVisibility: "hidden",
   display: "flex", 
   flexDirection: "column", 
   justifyContent: "center", 
   boxSizing: "border-box",
-  WebkitBackfaceVisibility: "hidden"
+  WebkitBackfaceVisibility: "hidden",
+  overflow: "hidden"
 };
 
 const cardContainerStyle = (view: string): React.CSSProperties => ({
@@ -858,7 +859,7 @@ const cosmicMapOverlayStyle: React.CSSProperties = {
   display: "flex", 
   flexDirection: "column", 
   padding: "2vh 2vw", 
-  justifyContent: "flex-start", // เปลี่ยนจาก center เป็น start เพื่อให้ไถขึ้นได้
+  justifyContent: "center",
   overflowY: "auto" 
 };
 const cosmicMapGridStyle: React.CSSProperties = { 

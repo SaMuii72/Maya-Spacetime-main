@@ -64,12 +64,20 @@ export default function Page() {
 
   const handleToPrediction = () => {
     setIsExiting(true);
-    setTimeout(() => { setView('cosmicMap'); setIsExiting(false); }, 800);
+    setTimeout(() => { 
+      setView('cosmicMap'); 
+      setIsExiting(false);
+      window.scrollTo(0, 0);
+    }, 800);
   };
 
   const handleToCosmicMap = () => {
     setIsExiting(true);
-    setTimeout(() => { setView('prediction'); setIsExiting(false); }, 800);
+    setTimeout(() => { 
+      setView('prediction'); 
+      setIsExiting(false);
+      window.scrollTo(0, 0);
+    }, 800);
   };
 
   const handleReset = () => {
@@ -124,7 +132,7 @@ export default function Page() {
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center" }}>
-                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "10px" }}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "20px" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
                 <div style={{position: "relative"}}>
@@ -247,7 +255,7 @@ export default function Page() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             minHeight: "100vh",
             padding: "20px",
             overflowY: "auto"
@@ -308,13 +316,6 @@ export default function Page() {
           <div style={{ paddingTop: "20px" }}>
           <header style={{ textAlign: "center", marginBottom: "30px", zIndex: 40 }}>
             <span style={labelStyle}>MAYA SPACETIME DATE</span>
-            <h2 style={{
-              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-              color: "#fcd34d",
-              margin: "10px 0 5px 0",
-              textShadow: "0 0 25px rgba(252, 211, 77, 0.7)",
-              fontFamily: "'Cinzel', 'Georgia', serif"
-            }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : '4 Eb\' | 13 Galactic Tone'}</h2>
             <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
               Your Tone shapes how you act. Your Sign defines who you are.
             </p>
@@ -764,7 +765,7 @@ const inputCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 500px)",
-  height: "min(60vh, 400px)",
+  height: "min(50vh, 400px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 

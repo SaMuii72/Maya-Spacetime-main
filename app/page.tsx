@@ -124,7 +124,7 @@ export default function Page() {
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center" }}>
-                <span style={{ ...labelStyle, fontSize: "1.5rem", marginTop: "20px" }}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "1.5rem", marginTop: "10px" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
                 <div style={{position: "relative"}}>
@@ -137,21 +137,21 @@ export default function Page() {
                       size="large"
                     />
                   )}
-                  <div style={{position: "relative", top: "30px"}}>
+                  <div style={{position: "relative", top: "20px"}}>
                     <h4 style={{
-                      fontSize: "clamp(2rem, 4vw, 2.2rem)",
+                      fontSize: "clamp(1.5rem, 4vw, 2.2rem)",
                       color: "#fcd34d",
                       margin: "10px 0",
                       textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
                       fontFamily: "'Cinzel', 'Georgia', serif",
                     }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
-                    <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1.3rem, 2vw, 1.4rem)" }}>
+                    <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "15px", fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
                       {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
                     </p>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "20px" }}>
+                <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "10px", flexWrap: "wrap" }}>
                     <button onClick={handleReset} style={subButtonStyle}>New Date</button>
                     <button
                       onClick={handleToPrediction}
@@ -719,7 +719,7 @@ function DashboardColumn({ title, icon, desc, color = "#7dd3fc", highlightRules 
 }
 
 // --- Style Objects (เหมือนเดิม แต่ปรับ cardContainerStyle) ---
-const fullCenterStyle: React.CSSProperties = { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 10 };
+const fullCenterStyle: React.CSSProperties = { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 10, padding: "20px 0" };
 const labelStyle: React.CSSProperties = {
   letterSpacing: "8px",
   fontSize: "0.75rem",
@@ -772,19 +772,20 @@ const resultCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 700px)",
-  height: "min(95vh, 850px)",
+  height: "auto",
+  maxHeight: "95vh",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 
-  padding: "20px", 
+  padding: "15px", 
   border: GLASS_BORDER, 
   backfaceVisibility: "hidden",
   display: "flex", 
   flexDirection: "column", 
-  justifyContent: "center", 
+  justifyContent: "space-between", 
   boxSizing: "border-box",
   WebkitBackfaceVisibility: "hidden",
-  overflow: "hidden"
+  overflow: "auto"
 };
 
 const cardContainerStyle = (view: string): React.CSSProperties => ({
@@ -858,7 +859,7 @@ const cosmicMapOverlayStyle: React.CSSProperties = {
   zIndex: 30, 
   display: "flex", 
   flexDirection: "column", 
-  padding: "2vh 2vw", 
+  padding: "20px 2vw", 
   justifyContent: "center",
   overflowY: "auto" 
 };

@@ -315,7 +315,7 @@ export default function Page() {
         <main style={cosmicMapOverlayStyle} className="cosmicMap-entry">
           <div style={{ paddingTop: "20px" }}>
           <header style={{ textAlign: "center", marginBottom: "30px", zIndex: 40 }}>
-            <span style={labelStyle}>MAYA SPACETIME DATE</span>
+            <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)" }}>MAYA SPACETIME DATE</span>
             <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
               Your Tone shapes how you act. Your Sign defines who you are.
             </p>
@@ -765,7 +765,7 @@ const inputCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 500px)",
-  height: "min(70vh, 450px)",
+  height: "min(70vh, 350px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 

@@ -280,7 +280,7 @@ export default function Page() {
             </div>
           </section>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }} className="prediction-cards-container">
             
             <PredictionCard icon="❤️" title="LOVE DESTINY" color="#fca5a5">
               {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love || 
@@ -434,6 +434,16 @@ export default function Page() {
     .card-love, .card-career {
       flex: 1 1 100%;
       max-width: 100%;
+    }
+    
+    .prediction-cards-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .prediction-cards-container > section {
+      width: 100%;
+      max-width: 400px;
     }
   }
 

@@ -765,7 +765,7 @@ const inputCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 500px)",
-  height: "min(70vh, 350px)",
+  height: "min(70vh, 250px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 

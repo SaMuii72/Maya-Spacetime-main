@@ -177,12 +177,12 @@ export default function Page() {
         </div>
       )}
 
-      {/* --- LOADING VIEW --- */}
+          {/* --- LOADING VIEW --- */}
       {view === 'loading' && (
         <div style={{ ...fullCenterStyle, zIndex: 15 }} className="loading-view-entry">
           <div style={{ textAlign: "center" }}>
             {/* All Symbols Orbiting */}
-            <div style={{ position: "relative", width: "600px", height: "600px", margin: "0 auto" }}>
+            <div style={{ position: "relative", width: "clamp(250px, 70vw, 600px)", height: "clamp(250px, 70vw, 600px)", margin: "0 auto" }}>
               {/* 20 Day Signs */}
               {Array.from({ length: 20 }, (_, i) => {
                 const angle = (i / 20) * 360;
@@ -197,8 +197,8 @@ export default function Page() {
                       position: "absolute",
                       top: "50%",
                       left: "50%",
-                      width: "60px", 
-                      height: "60px", 
+                      width: "clamp(40px, 8vw, 60px)", 
+                      height: "clamp(40px, 8vw, 60px)", 
                       objectFit: "contain", 
                       filter: "brightness(1.2) drop-shadow(0 0 10px rgba(252, 211, 77, 0.6))",
                       transformOrigin: "0 0",
@@ -218,8 +218,8 @@ export default function Page() {
                     position: "absolute",
                     top: "50%",
                     left: "50%",
-                    width: "50px", 
-                    height: "50px", 
+                    width: "clamp(35px, 7vw, 50px)", 
+                    height: "clamp(35px, 7vw, 50px)", 
                     objectFit: "contain", 
                     filter: "brightness(1.2) drop-shadow(0 0 10px rgba(125, 211, 252, 0.6))",
                     transformOrigin: "0 0",

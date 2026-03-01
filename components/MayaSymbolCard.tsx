@@ -29,6 +29,9 @@ export default function MayaSymbolCard({ kin, toneNumber, signNumber, signName, 
     setRotation({ x: 0, y: 0 });
   };
 
+  const baseSize = size === 'large' ? 280 : 200;
+  const scaleFactor = size === 'large' ? 'min(1, 80vw / 280px)' : 'min(1, 60vw / 200px)';
+
   return (
     <div 
       ref={cardRef}
@@ -36,12 +39,12 @@ export default function MayaSymbolCard({ kin, toneNumber, signNumber, signName, 
       onMouseLeave={handleMouseLeave}
       style={{ 
         position: "relative", 
-        width: "280px", 
-        height: "400px", 
+        width: `${baseSize}px`, 
+        height: `${baseSize * 1.43}px`,
         margin: "0 auto",
         transition: "transform 0.2s ease-out",
         transformStyle: "preserve-3d",
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        transform: `scale(${scaleFactor}) perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
         borderRadius: "20px",
         overflow: "visible"
       }}

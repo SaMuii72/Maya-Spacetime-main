@@ -52,15 +52,12 @@ export default function Page() {
     if (validated) {
       const dateString = `${validated.y}-${String(validated.m).padStart(2, '0')}-${String(validated.d).padStart(2, '0')}`;
       const result = getTzolkinDate(dateString);
+      console.log('Maya Result:', result); // Debug
       setMayanResult(result);
       setView('loading');
       setTimeout(() => {
+        console.log('Switching to result view, mayanResult:', result); // Debug
         setView('result');
-        // เพิ่ม class animation หลังจากแสดงผล
-        setTimeout(() => {
-          const resultCard = document.querySelector('.result-card-back');
-          if (resultCard) resultCard.classList.add('card-draw-animation');
-        }, 50);
       }, 3000);
     }
   };
@@ -126,11 +123,11 @@ export default function Page() {
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center", padding: "40px 0" }}>
-                <span style={{ ...labelStyle, fontSize: "1.5rem" }}>Cosmic Identity</span>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center" }}>
+                <span style={{ ...labelStyle, fontSize: "1.5rem", marginTop: "20px" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
-                <div style={{position: "relative", top: "30px"}}>
+                <div style={{position: "relative"}}>
                   {mayanResult && (
                     <MayaSymbolCard 
                       kin={mayanResult.kin}
@@ -140,18 +137,21 @@ export default function Page() {
                       size="large"
                     />
                   )}
-                <div style={{position: "relative", top: "30px"}}>
-                  <h4 style={{
-                    fontSize: "clamp(2rem, 4vw, 2.2rem)",
-                    color: "#fcd34d",
-                    margin: "10px 0",
-                    textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
-                    fontFamily: "'Cinzel', 'Georgia', serif",
-                  }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
-                  <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1.3rem, 2vw, 1.4rem)" }}>
-                    {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
-                  </p>
-                  <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                  <div style={{position: "relative", top: "30px"}}>
+                    <h4 style={{
+                      fontSize: "clamp(2rem, 4vw, 2.2rem)",
+                      color: "#fcd34d",
+                      margin: "10px 0",
+                      textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
+                      fontFamily: "'Cinzel', 'Georgia', serif",
+                    }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
+                    <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1.3rem, 2vw, 1.4rem)" }}>
+                      {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "20px" }}>
                     <button onClick={handleReset} style={subButtonStyle}>New Date</button>
                     <button
                       onClick={handleToPrediction}
@@ -166,8 +166,6 @@ export default function Page() {
                     >
                       View Full Reading →
                     </button>
-                </div>
-                </div>
                 </div>
               </div>
             </div>
@@ -249,8 +247,10 @@ export default function Page() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            minHeight: "100vh"
+            justifyContent: "flex-start",
+            minHeight: "100vh",
+            padding: "60px 20px 40px 20px",
+            overflowY: "auto"
           }}
         >
           <div style={{ textAlign: "center", marginBottom: "30px" }}>

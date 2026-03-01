@@ -131,8 +131,8 @@ export default function Page() {
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", height: "100%", textAlign: "center" }}>
-                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "20px" }}>Cosmic Identity</span>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", height: "100%", textAlign: "center", padding: "10px", gap: "15px" }}>
+                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "30px" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
                 <div style={{position: "relative"}}>
@@ -145,7 +145,7 @@ export default function Page() {
                       size="large"
                     />
                   )}
-                  <div style={{position: "relative", top: "10px"}}>
+                  <div style={{position: "relative", top: "10px", marginTop: "15px"}}>
                     <h4 style={{
                       fontSize: "clamp(1.3rem, 3.5vw, 2.2rem)",
                       color: "#fcd34d",
@@ -190,7 +190,7 @@ export default function Page() {
         <div style={{ ...fullCenterStyle, zIndex: 15 }} className="loading-view-entry">
           <div style={{ textAlign: "center" }}>
             {/* All Symbols Orbiting */}
-            <div style={{ position: "relative", width: "clamp(250px, 70vw, 600px)", height: "clamp(250px, 70vw, 600px)", margin: "0 auto" }}>
+            <div style={{ position: "relative", width: "clamp(200px, 60vw, 600px)", height: "clamp(200px, 60vw, 600px)", margin: "0 auto" }}>
               {/* 20 Day Signs */}
               {Array.from({ length: 20 }, (_, i) => {
                 const angle = (i / 20) * 360;
@@ -765,7 +765,7 @@ const inputCardStyle: React.CSSProperties = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "min(90vw, 500px)",
-  height: "min(50vh, 400px)",
+  height: "min(70vh, 450px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 

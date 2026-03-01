@@ -159,7 +159,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "15px", marginBottom: "5px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "15px", marginBottom: "5px", flexWrap: "wrap" }} className="result-buttons">
                     <button onClick={handleReset} style={subButtonStyle}>New Date</button>
                     <button
                       onClick={handleToPrediction}
@@ -497,6 +497,10 @@ export default function Page() {
   @media (max-width: 768px) {
     .hide-on-small {
       display: none;
+    }
+    
+    .result-buttons {
+      flex-direction: column-reverse !important;
     }
   }
   

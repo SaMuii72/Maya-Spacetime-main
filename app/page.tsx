@@ -21,7 +21,7 @@ export default function Page() {
   const [year, setYear] = useState("");
   const [error, setError] = useState("");
 
-  const [view, setView] = useState<'input' | 'result' | 'prediction' | 'cosmicMap'>('input');
+  const [view, setView] = useState<'input' | 'result' | 'prediction' | 'cosmicMap' | 'loading'>('input');
   const [isExiting, setIsExiting] = useState(false);
   const [mayanResult, setMayanResult] = useState<any>(null);
 
@@ -53,7 +53,15 @@ export default function Page() {
       const dateString = `${validated.y}-${String(validated.m).padStart(2, '0')}-${String(validated.d).padStart(2, '0')}`;
       const result = getTzolkinDate(dateString);
       setMayanResult(result);
-      setView('result');
+      setView('loading');
+      setTimeout(() => {
+        setView('result');
+        // เพิ่ม class animation หลังจากแสดงผล
+        setTimeout(() => {
+          const resultCard = document.querySelector('.result-card-back');
+          if (resultCard) resultCard.classList.add('card-draw-animation');
+        }, 50);
+      }, 3000);
     }
   };
 
@@ -117,7 +125,7 @@ export default function Page() {
             </div>
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
-            <div style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <div style={{ textAlign: "center" }}>
                 <span style={{ ...labelStyle, fontSize: "1.5rem" }}>Cosmic Identity</span>
                 
@@ -168,6 +176,65 @@ export default function Page() {
           <footer style={footerWrapperStyle(view)}>
             <div>🌙 20 Signs</div><div>🪐 13 Tones</div><div>✨ 260 Days</div>
           </footer>
+        </div>
+      )}
+
+      {/* --- LOADING VIEW --- */}
+      {view === 'loading' && (
+        <div style={{ ...fullCenterStyle, zIndex: 15 }} className="loading-view-entry">
+          <div style={{ textAlign: "center" }}>
+            {/* All Symbols Orbiting */}
+            <div style={{ position: "relative", width: "600px", height: "600px", margin: "0 auto" }}>
+              {/* 20 Day Signs */}
+              {Array.from({ length: 20 }, (_, i) => {
+                const angle = (i / 20) * 360;
+                const signNames = Object.keys(SIGN_FILE_NAMES);
+                return (
+                  <img 
+                    key={`sign-${i}`}
+                    src={`/Maya%20Symbol/Day%20Sign/${i + 1}-${SIGN_FILE_NAMES[signNames[i]]}.png`}
+                    alt={`Sign ${i + 1}`}
+                    className={`orbit-sign-${i}`}
+                    style={{ 
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      width: "60px", 
+                      height: "60px", 
+                      objectFit: "contain", 
+                      filter: "brightness(1.2) drop-shadow(0 0 10px rgba(252, 211, 77, 0.6))",
+                      transformOrigin: "0 0",
+                      opacity: 0.7
+                    }} 
+                  />
+                );
+              })}
+              {/* 13 Galactic Tones */}
+              {Array.from({ length: 13 }, (_, i) => (
+                <img 
+                  key={`tone-${i}`}
+                  src={`/Maya%20Symbol/Galatic%20Tones/${i + 1}.png`}
+                  alt={`Tone ${i + 1}`}
+                  className={`orbit-tone-${i}`}
+                  style={{ 
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    width: "50px", 
+                    height: "50px", 
+                    objectFit: "contain", 
+                    filter: "brightness(1.2) drop-shadow(0 0 10px rgba(125, 211, 252, 0.6))",
+                    transformOrigin: "0 0",
+                    opacity: 0.8
+                  }} 
+                />
+              ))}
+              {/* Center - Empty space */}
+            </div>
+            <p style={{ marginTop: "30px", fontSize: "1.2rem", color: "#fcd34d", letterSpacing: "3px", animation: "pulse 1.5s ease-in-out infinite" }}>
+              Revealing your cosmic identity...
+            </p>
+          </div>
         </div>
       )}
 
@@ -344,33 +411,30 @@ export default function Page() {
   transition: all 0.5s ease;
 }
 
-.cosmicMap-card-fix:hover {
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-  border-color: rgba(252, 211, 77, 0.2) !important;
-}
-
 .cosmicMap-card-fix .custom-scroll::-webkit-scrollbar {
   width: 2px;
 }
   /* 1. การตั้งค่าพื้นฐานสำหรับหน้า Prediction */
   .prediction-card-hover {
     position: relative;
-    overflow: hidden; /* กักแสงให้อยู่ในกรอบ */
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     z-index: 1;
   }
 
-  /* 2. แสงวิ่งรอบการ์ด (The Cosmic Aura) - ปิดการใช้งาน */
-  .prediction-card-hover::before {
-    display: none;
+  .prediction-card-hover::before,
+  .prediction-card-hover::after {
+    content: none;
   }
 
   /* 3. เอฟเฟกต์เวลาเอาเมาส์ไปวาง - ลดการเคลื่อนไหว */
-  .card-love:hover, .card-career:hover {
-    transform: translateY(-5px) !important;
-    filter: brightness(1.1);
-    box-shadow: 0 10px 30px rgba(252, 211, 77, 0.1);
+  .card-love, .card-career, .cosmicMap-card-fix {
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card-love:hover, .card-career:hover, .cosmicMap-card-fix:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    border-color: rgba(252, 211, 77, 0.2) !important;
   }
 
   /* 4. การเลื่อนขึ้นของข้อความ (Text Entrance) */
@@ -446,6 +510,23 @@ export default function Page() {
 
   .cosmicMap-entry { animation: cosmicMapFadeIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
   @keyframes cosmicMapFadeIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+
+  @keyframes symbolPulse { 
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  @keyframes orbit {
+    0% { transform: translate(-50%, -50%) rotate(0deg) translateX(150px) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg) translateX(150px) rotate(-360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .loading-view-entry { animation: fadeIn 0.5s ease forwards; }
 
 
 /* --- จัดการหน้า 3 (Prediction) และส่วนที่ล้นในมือถือ --- */
@@ -744,19 +825,17 @@ const cardContainerStyle = (view: string): React.CSSProperties => ({
 const predictionCardStyle: React.CSSProperties = {
   width: "100%",
   height: "100%",
-  // 🎯 เปลี่ยนเป็น Gradient เพื่อให้เห็น Layer ของแสง
   background: "linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
-  backdropFilter: "blur(30px)", // เพิ่ม Blur อีกนิด
+  backdropFilter: "blur(30px)",
   borderRadius: "24px",
   border: "1px solid rgba(255, 255, 255, 0.12)",
   padding: "40px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)", // เพิ่มเงาด้านล่างให้ดูเหมือนลอย
+  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
   transition: "all 0.4s ease",
-  position: "relative",
-  overflow: "hidden"
+  position: "relative"
 };
 const predictionIconStyle: React.CSSProperties = { fontSize: "3rem", marginBottom: "20px" };
 const scrollContentStyle: React.CSSProperties = { flex: 1, overflowY: "auto", paddingRight: "15px", width: "100%" };

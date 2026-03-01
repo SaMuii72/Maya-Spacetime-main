@@ -10,20 +10,40 @@ interface MayaSymbolCardProps {
 }
 
 export default function MayaSymbolCard({ kin, toneNumber, signNumber, signName, size = 'small' }: MayaSymbolCardProps) {
-  const [isHovered, setIsHovered] = React.useState(false);
+  const [rotation, setRotation] = React.useState({ x: 0, y: 0 });
+  const cardRef = React.useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
+    setRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setRotation({ x: 0, y: 0 });
+  };
 
   return (
     <div 
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{ 
         position: "relative", 
         width: "280px", 
         height: "400px", 
-        margin: "20px auto",
-        transition: "transform 0.6s ease",
+        margin: "0 auto",
+        transition: "transform 0.2s ease-out",
         transformStyle: "preserve-3d",
-        transform: isHovered ? "rotateY(15deg) rotateX(5deg)" : "rotateY(0deg) rotateX(0deg)"
+        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        borderRadius: "20px",
+        overflow: "visible"
       }}
     >
       <div style={{ position: "absolute", width: "calc(100% + 40px)", height: "calc(100% + 40px)", top: "-20px", left: "-20px", backgroundColor: "black", opacity: 0.2, borderRadius: "20px", zIndex: 1 }} />

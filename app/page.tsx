@@ -118,6 +118,19 @@ export default function Page() {
             <div style={{ ...cardFaceStyle, transform: "rotateY(180deg)" }}>
               <div style={{ textAlign: "center" }}>
                 <span style={{ ...labelStyle, fontSize: "1.1rem" }}>Cosmic Identity</span>
+                
+                {/* Maya Symbol Card */}
+                {mayanResult && (
+                  <div style={{ position: "relative", width: "280px", height: "400px", margin: "20px auto" }}>
+                    <img src="/frame.png" alt="Frame" style={{ position: "absolute", width: "100%", height: "100%", objectFit: "contain" }} />
+                    <div style={{ position: "absolute", top: "12%", right: "12%", bottom: "12%", left: "12%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "30px", paddingLeft: "20px", paddingRight: "20px", gap: "25px" }}>
+                      <div style={{ fontSize: "3rem", fontWeight: "bold", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>{mayanResult.kin}</div>
+                      <img src={`/Maya%20Symbol/Galatic%20Tones/${mayanResult.toneNumber}.png`} alt={`Tone ${mayanResult.toneNumber}`} style={{ width: "90px", height: "90px", objectFit: "contain" }} />
+                      <img src={`/Maya%20Symbol/Day%20Sign/${mayanResult.signNumber}-${mayanResult.sign.name.toLowerCase()}.png`} alt={mayanResult.sign.name} style={{ width: "90px", height: "90px", objectFit: "contain" }} />
+                    </div>
+                  </div>
+                )}
+                
                 <h2 style={{
                   fontSize: "clamp(1.8rem, 4vw, 3rem)",
                   color: "#fcd34d",
@@ -126,7 +139,7 @@ export default function Page() {
                   fontFamily: "'Cinzel', 'Georgia', serif"
                 }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h2>
                 <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
-                  {mayanResult ? `Kin ${mayanResult.kin} | Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Kin 235 | Tone 3 | Sign: Eagle'}
+                  {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
                 </p>
                 <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
                   <button onClick={handleReset} style={subButtonStyle}>New Date</button>
@@ -223,23 +236,22 @@ export default function Page() {
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", maxWidth: "1400px", width: "100%", margin: "0 auto" }}>
             
-            {/* วงกลมตรงกลาง */}
+            {/* วงกลมตรงกลาง - แทนด้วย Maya Symbol Card */}
             <section style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <div style={mayaCirclePlaceholder}>
-                <div style={innerCircle} className="maya-circle-mobile">
-                  <div style={orbitSpinStyle} />
-                </div>
-                <div style={{ marginTop: "30px", textAlign: "center" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "0.8rem", color: "#7dd3fc", letterSpacing: "3px" }}>KIN</span>
-                    <h1 style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)", color: "#fff", margin: "0", lineHeight: "1", textShadow: "0 0 20px rgba(255, 255, 255, 0.6)" }}>
-                      {mayanResult?.kin || 235}
-                    </h1>
+              {mayanResult && (
+                <div style={{ position: "relative", width: "min(40vw, 300px)", height: "min(56vw, 420px)", margin: "0 auto" }}>
+                  <img src="/frame.png" alt="Frame" style={{ position: "absolute", width: "100%", height: "100%", objectFit: "contain" }} />
+                  <div style={{ position: "absolute", top: "12%", right: "12%", bottom: "12%", left: "12%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "clamp(20px, 5vw, 30px)", paddingLeft: "clamp(20px, 5vw, 30px)", paddingRight: "clamp(20px, 5vw, 30px)", gap: "clamp(15px, 4vw, 25px)" }}>
+                    <div style={{ fontSize: "clamp(2.5rem, 7vw, 4rem)", fontWeight: "bold", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>{mayanResult.kin}</div>
+                    <img src={`/Maya%20Symbol/Galatic%20Tones/${mayanResult.toneNumber}.png`} alt={`Tone ${mayanResult.toneNumber}`} style={{ width: "clamp(70px, 16vw, 100px)", height: "clamp(70px, 16vw, 100px)", objectFit: "contain" }} />
+                    <img src={`/Maya%20Symbol/Day%20Sign/${mayanResult.signNumber}-${mayanResult.sign.name.toLowerCase()}.png`} alt={mayanResult.sign.name} style={{ width: "clamp(70px, 16vw, 100px)", height: "clamp(70px, 16vw, 100px)", objectFit: "contain" }} />
                   </div>
-                  <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
-                    {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
-                  </h3>
                 </div>
+              )}
+              <div style={{ marginTop: "30px", textAlign: "center" }}>
+                <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
+                  {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
+                </h3>
               </div>
             </section>
 

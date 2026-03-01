@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import SpaceBackground from "../components/SpaceBackground";
+import MayaSymbolCard from "../components/MayaSymbolCard";
 import { getTzolkinDate } from "@/lib/mayan/tzolkin";
 import { WORK_LOVE_BY_SIGN } from "@/lib/mayan/workLoveBySign";
 import { generateMayanNarrative } from "@/lib/mayan/profileNarrative";
 import { highlightText } from "@/lib/mayan/highlightText";
+import { SIGN_FILE_NAMES } from "@/lib/mayan/signFileNames";
 
 
 // 🎯 Cosmic Design Constants
@@ -102,7 +104,7 @@ export default function Page() {
 
           <div className={`card-container ${view === 'result' ? "flipped" : ""}`} style={cardContainerStyle(view)}>
             {/* FRONT CARD (INPUT) */}
-            <div style={cardFaceStyle}>
+            <div style={inputCardStyle}>
               <div style={{ display: "flex", gap: "25px", marginBottom: "30px", alignItems: "flex-end" }}>
                 <InputItem label="DAY" value={day} onChange={(val: string) => { setDay(val); setError(""); }} hint="DD" />
                 <InputItem label="MONTH" value={month} onChange={(val: string) => { setMonth(val); setError(""); }} hint="Select..." isMonth={true} />
@@ -115,47 +117,49 @@ export default function Page() {
             </div>
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
-            <div style={{ ...cardFaceStyle, transform: "rotateY(180deg)" }}>
+            <div style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <div style={{ textAlign: "center" }}>
-                <span style={{ ...labelStyle, fontSize: "1.1rem" }}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "1.5rem" }}>Cosmic Identity</span>
                 
                 {/* Maya Symbol Card */}
-                {mayanResult && (
-                  <div style={{ position: "relative", width: "280px", height: "400px", margin: "20px auto" }}>
-                    <img src="/frame.png" alt="Frame" style={{ position: "absolute", width: "100%", height: "100%", objectFit: "contain" }} />
-                    <div style={{ position: "absolute", top: "12%", right: "12%", bottom: "12%", left: "12%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "30px", paddingLeft: "20px", paddingRight: "20px", gap: "25px" }}>
-                      <div style={{ fontSize: "3rem", fontWeight: "bold", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>{mayanResult.kin}</div>
-                      <img src={`/Maya%20Symbol/Galatic%20Tones/${mayanResult.toneNumber}.png`} alt={`Tone ${mayanResult.toneNumber}`} style={{ width: "90px", height: "90px", objectFit: "contain" }} />
-                      <img src={`/Maya%20Symbol/Day%20Sign/${mayanResult.signNumber}-${mayanResult.sign.name.toLowerCase()}.png`} alt={mayanResult.sign.name} style={{ width: "90px", height: "90px", objectFit: "contain" }} />
-                    </div>
-                  </div>
-                )}
-                
-                <h2 style={{
-                  fontSize: "clamp(1.8rem, 4vw, 3rem)",
-                  color: "#fcd34d",
-                  margin: "10px 0",
-                  textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
-                  fontFamily: "'Cinzel', 'Georgia', serif"
-                }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h2>
-                <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1rem, 2vw, 1.4rem)" }}>
-                  {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
-                </p>
-                <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
-                  <button onClick={handleReset} style={subButtonStyle}>New Date</button>
-                  <button
-                    onClick={handleToPrediction}
-                    style={{
-                      ...subButtonStyle,
-                      borderColor: "#fcd34d",
-                      color: "#fcd34d",
-                      boxShadow: "0 0 15px rgba(252, 211, 77, 0.2)",
-                      transition: "all 0.3s ease"
-                    }}
-                    className="predict-btn"
-                  >
-                    View Full Reading →
-                  </button>
+                <div style={{position: "relative", top: "30px"}}>
+                  {mayanResult && (
+                    <MayaSymbolCard 
+                      kin={mayanResult.kin}
+                      toneNumber={mayanResult.toneNumber}
+                      signNumber={mayanResult.signNumber}
+                      signName={mayanResult.sign.name}
+                      size="large"
+                    />
+                  )}
+                <div style={{position: "relative", top: "30px"}}>
+                  <h4 style={{
+                    fontSize: "clamp(2rem, 4vw, 2.2rem)",
+                    color: "#fcd34d",
+                    margin: "10px 0",
+                    textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
+                    fontFamily: "'Cinzel', 'Georgia', serif",
+                  }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
+                  <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "25px", fontSize: "clamp(1.3rem, 2vw, 1.4rem)" }}>
+                    {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
+                  </p>
+                  <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                    <button onClick={handleReset} style={subButtonStyle}>New Date</button>
+                    <button
+                      onClick={handleToPrediction}
+                      style={{
+                        ...subButtonStyle,
+                        borderColor: "#fcd34d",
+                        color: "#fcd34d",
+                        boxShadow: "0 0 15px rgba(252, 211, 77, 0.2)",
+                        transition: "all 0.3s ease"
+                      }}
+                      className="predict-btn"
+                    >
+                      View Full Reading →
+                    </button>
+                </div>
+                </div>
                 </div>
               </div>
             </div>
@@ -190,6 +194,25 @@ export default function Page() {
               How your Maya signature influences love and career
             </p>
           </div>
+
+          {/* Maya Symbol Card at center */}
+          <section style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: "30px" }}>
+            {mayanResult && (
+              <MayaSymbolCard 
+                kin={mayanResult.kin}
+                toneNumber={mayanResult.toneNumber}
+                signNumber={mayanResult.signNumber}
+                signName={mayanResult.sign.name}
+                size="large"
+              />
+            )}
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
+                {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
+              </h3>
+            </div>
+          </section>
+
           {/* 💡 ลบ height: 550px ออก และใช้ flexWrap ให้การ์ดต่อคิวกันเองเมื่อจอแคบ */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }}>
             
@@ -239,14 +262,13 @@ export default function Page() {
             {/* วงกลมตรงกลาง - แทนด้วย Maya Symbol Card */}
             <section style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
               {mayanResult && (
-                <div style={{ position: "relative", width: "min(40vw, 300px)", height: "min(56vw, 420px)", margin: "0 auto" }}>
-                  <img src="/frame.png" alt="Frame" style={{ position: "absolute", width: "100%", height: "100%", objectFit: "contain" }} />
-                  <div style={{ position: "absolute", top: "12%", right: "12%", bottom: "12%", left: "12%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: "clamp(20px, 5vw, 30px)", paddingLeft: "clamp(20px, 5vw, 30px)", paddingRight: "clamp(20px, 5vw, 30px)", gap: "clamp(15px, 4vw, 25px)" }}>
-                    <div style={{ fontSize: "clamp(2.5rem, 7vw, 4rem)", fontWeight: "bold", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>{mayanResult.kin}</div>
-                    <img src={`/Maya%20Symbol/Galatic%20Tones/${mayanResult.toneNumber}.png`} alt={`Tone ${mayanResult.toneNumber}`} style={{ width: "clamp(70px, 16vw, 100px)", height: "clamp(70px, 16vw, 100px)", objectFit: "contain" }} />
-                    <img src={`/Maya%20Symbol/Day%20Sign/${mayanResult.signNumber}-${mayanResult.sign.name.toLowerCase()}.png`} alt={mayanResult.sign.name} style={{ width: "clamp(70px, 16vw, 100px)", height: "clamp(70px, 16vw, 100px)", objectFit: "contain" }} />
-                  </div>
-                </div>
+                <MayaSymbolCard 
+                  kin={mayanResult.kin}
+                  toneNumber={mayanResult.toneNumber}
+                  signNumber={mayanResult.signNumber}
+                  signName={mayanResult.sign.name}
+                  size="large"
+                />
               )}
               <div style={{ marginTop: "30px", textAlign: "center" }}>
                 <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
@@ -267,7 +289,7 @@ export default function Page() {
                 />
               </div>
 
-              <div style={{ flex: "1 1 400px", maxWidth: "550px", display: "flex" }}>
+              <div style={{ flex: "1 1 400px", maxWidth: "600px", display: "flex" }}>
                 <DashboardColumn
                   title="NAWAL SIGN"
                   icon="🦅"
@@ -667,22 +689,44 @@ const descStyle: React.CSSProperties = {
   textAlign: "center" 
 };
 
-const cardFaceStyle: React.CSSProperties = { 
-  position: "absolute", // ต้องเป็น absolute เพื่อให้หน้าหน้า-หลังซ้อนกันได้
-  inset: 0, 
-  width: "100%", 
-  height: "100%", 
+const inputCardStyle: React.CSSProperties = { 
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "min(90vw, 500px)",
+  height: "min(70vh, 400px)",
   background: GLASS_BG, 
   backdropFilter: GLASS_BLUR, 
   borderRadius: "30px 2px", 
   padding: "30px 40px", 
   border: GLASS_BORDER, 
-  backfaceVisibility: "hidden", // สำคัญมาก: เพื่อไม่ให้เห็นหน้าหลังตอนมันพลิก
+  backfaceVisibility: "hidden",
   display: "flex", 
   flexDirection: "column", 
   justifyContent: "center", 
   boxSizing: "border-box",
-  WebkitBackfaceVisibility: "hidden" // เผื่อสำหรับ Safari ใน iPhone
+  WebkitBackfaceVisibility: "hidden"
+};
+
+const resultCardStyle: React.CSSProperties = { 
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "min(90vw, 700px)",
+  height: "min(95vh, 850px)",
+  background: GLASS_BG, 
+  backdropFilter: GLASS_BLUR, 
+  borderRadius: "30px 2px", 
+  padding: "30px 40px", 
+  border: GLASS_BORDER, 
+  backfaceVisibility: "hidden",
+  display: "flex", 
+  flexDirection: "column", 
+  justifyContent: "center", 
+  boxSizing: "border-box",
+  WebkitBackfaceVisibility: "hidden"
 };
 
 const cardContainerStyle = (view: string): React.CSSProperties => ({

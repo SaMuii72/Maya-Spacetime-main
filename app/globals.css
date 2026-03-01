@@ -37,3 +37,7 @@ body {
 
 
 
+
+.maya-card-hover:hover {
+  transform: rotateY(15deg) rotateX(5deg);
+}

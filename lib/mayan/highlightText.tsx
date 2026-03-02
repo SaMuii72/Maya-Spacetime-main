@@ -17,7 +17,8 @@ export function highlightText(
     result = result.flatMap((chunk, i) => {
       if (typeof chunk !== "string") return chunk;
 
-      const parts = chunk.split(new RegExp(`(\\b${word}\\b)`, "gi"));
+      const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const parts = chunk.split(new RegExp(`(${escapedWord})`, "gi"));
 
       return parts.map((part, index) =>
         part.toLowerCase() === word.toLowerCase() ? (

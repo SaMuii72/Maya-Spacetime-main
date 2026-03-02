@@ -1,0 +1,54 @@
+// เพิ่มในส่วนบนของ Page component:
+
+import { translations, Language } from "@/lib/translations";
+
+// เพิ่ม state สำหรับภาษา
+const [language, setLanguage] = useState<Language>('en');
+const t = translations[language];
+
+// เพิ่มปุ่มสลับภาษาที่มุมบนขวา (วางใน return ก่อน SpaceBackground)
+<button 
+  onClick={() => setLanguage(language === 'en' ? 'th' : 'en')}
+  style={{
+    position: "fixed",
+    top: "20px",
+    right: "20px",
+    zIndex: 100,
+    background: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    color: "#fff",
+    padding: "10px 20px",
+    borderRadius: "20px",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+    letterSpacing: "1px",
+    transition: "all 0.3s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background = "rgba(252, 211, 77, 0.2)";
+    e.currentTarget.style.borderColor = "#fcd34d";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+  }}
+>
+  {language === 'en' ? '🇹🇭 ไทย' : '🇬🇧 EN'}
+</button>
+
+// แทนที่ข้อความทั้งหมดด้วย t.key เช่น:
+// "Sacred Timekeeper" → {t.sacredTimekeeper}
+// "Discover Your" → {t.discoverYour}
+// "REVEAL DESTINY" → {t.revealDestiny}
+// "New Date" → {t.newDate}
+// etc.
+
+// ตัวอย่างการใช้งาน:
+<span style={labelStyle}>{t.sacredTimekeeper}</span>
+<span style={{ fontSize: "0.6em" }}>{t.discoverYour}</span>
+<span style={{ fontWeight: "600", color: "#fcd34d" }}>{t.mayaSpacetimeIdentity}</span>
+<p>{t.headerDesc}</p>
+<button onClick={handleReveal}>{t.revealDestiny}</button>
+<button onClick={handleReset}>{t.newDate}</button>
+<button onClick={handleToPrediction}>{t.viewFullReading}</button>

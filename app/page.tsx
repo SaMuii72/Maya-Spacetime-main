@@ -6,8 +6,12 @@ import MayaSymbolCard from "../components/MayaSymbolCard";
 import { getTzolkinDate } from "@/lib/mayan/tzolkin";
 import { WORK_LOVE_BY_SIGN } from "@/lib/mayan/workLoveBySign";
 import { generateMayanNarrative } from "@/lib/mayan/profileNarrative";
+import { generateMayanNarrativeTh } from "@/lib/mayan/profileNarrativeTh";
 import { highlightText } from "@/lib/mayan/highlightText";
 import { SIGN_FILE_NAMES } from "@/lib/mayan/signFileNames";
+import { translations, Language } from "@/lib/translations";
+import { getTranslatedTone, getTranslatedSign } from "@/lib/mayan/translations";
+import { WORK_LOVE_BY_SIGN_TH } from "@/lib/mayan/workLoveBySignTh";
 
 
 // 🎯 Cosmic Design Constants
@@ -20,6 +24,8 @@ export default function Page() {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [error, setError] = useState("");
+  const [language, setLanguage] = useState<Language>('en');
+  const t = translations[language];
 
   const [view, setView] = useState<'input' | 'result' | 'prediction' | 'cosmicMap' | 'loading'>('input');
   const [isExiting, setIsExiting] = useState(false);
@@ -28,7 +34,7 @@ export default function Page() {
   const validateDate = () => {
     setError("");
     if (!day || !month || !year) {
-      setError("Please fulfill your celestial coordinates (Day/Month/Year).");
+      setError(t.errorCoordinates);
       return null;
     }
     const d = parseInt(day);
@@ -36,12 +42,12 @@ export default function Page() {
     let y = parseInt(year);
     if (y > 2400) y -= 543;
     if (y < 1000 || y > 3000) {
-      setError("The Year must be between 1000 - 3000 (AD/BE).");
+      setError(t.errorYear);
       return null;
     }
     const dateCheck = new Date(y, m - 1, d);
     if (dateCheck.getFullYear() !== y || dateCheck.getMonth() !== m - 1 || dateCheck.getDate() !== d) {
-      setError(`Invalid Date.`);
+      setError(t.errorInvalidDate);
       return null;
     }
     return { d, m, y };
@@ -88,30 +94,107 @@ export default function Page() {
 
   const getHighlightRules = () => {
     if (!mayanResult) return [];
-    return [
+    
+    const rules = [
       { word: `Tone ${mayanResult.toneNumber}`, className: "text-amber-400 font-semibold" },
       { word: mayanResult.tone.name, className: "text-amber-300 font-semibold" },
       { word: mayanResult.sign.name, className: "text-teal-300 font-semibold" },
       { word: mayanResult.sign.archetype, className: "text-teal-200 italic" }
     ];
+
+    // เพิ่ม highlight rules สำหรับภาษาไทย
+    if (language === 'th') {
+      const translatedTone = getTranslatedTone(mayanResult.tone.name, 'th');
+      const translatedSign = getTranslatedSign(mayanResult.sign.name, 'th');
+      
+      // แปล archetype เป็นภาษาไทย
+      const archetypeTh: Record<string, string> = {
+        "The Primordial Mother": "แม่ดั้งเดิม",
+        "The Wind": "ลม",
+        "The Night": "ราตรี",
+        "The Seed": "เมล็ดพันธุ์",
+        "The Serpent": "งู",
+        "The Transformer": "ผู้เปลี่ยนแปลง",
+        "The Healer": "ผู้รักษา",
+        "The Star": "ดาว",
+        "The Moon": "จันทร์",
+        "The Companion": "เพื่อนคู่ใจ",
+        "The Artist": "ศิลปิน",
+        "The Path": "เส้นทาง",
+        "The Reed": "ต้นอ้อ",
+        "The Jaguar": "เสือจากัวร์",
+        "The Eagle": "นกอินทรี",
+        "The Ancestor": "บรรพบุรุษ",
+        "The Earth": "โลก",
+        "The Mirror": "กระจก",
+        "The Storm": "พายุ",
+        "The Sun": "ดวงอาทิตย์"
+      };
+      
+      const translatedArchetype = archetypeTh[mayanResult.sign.archetype] || mayanResult.sign.archetype;
+      
+      rules.push(
+        { word: `โทนกาแล็กซีที่ ${mayanResult.toneNumber}`, className: "text-amber-400 font-semibold" },
+        { word: `โทนที่ ${mayanResult.toneNumber}`, className: "text-amber-400 font-semibold" },
+        { word: translatedTone, className: "text-amber-300 font-semibold" },
+        { word: translatedSign, className: "text-teal-300 font-semibold" },
+        // เพิ่มชื่ออังกฤษในวงเล็บและแปลภาษาไทย
+        { word: `(${translatedArchetype})`, className: "text-teal-200 italic" },
+        { word: translatedArchetype, className: "text-teal-200 italic" },
+        { word: `(${mayanResult.sign.archetype})`, className: "text-teal-200 italic" }
+      );
+    }
+
+    return rules;
   };
 
   return (
     <div id="main-layout" style={{ position: "relative", height: "100vh", overflowY: "auto", color: "#fff", fontFamily: "serif" }}>
       <SpaceBackground />
+      
+      {/* Language Switcher */}
+      <button 
+        onClick={() => setLanguage(language === 'en' ? 'th' : 'en')}
+        style={{
+          position: "fixed",
+          top: "20px",
+          right: "20px",
+          zIndex: 100,
+          background: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          color: "#fff",
+          padding: "10px 20px",
+          borderRadius: "20px",
+          cursor: "pointer",
+          fontSize: "0.9rem",
+          letterSpacing: "1px",
+          transition: "all 0.3s ease"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(252, 211, 77, 0.2)";
+          e.currentTarget.style.borderColor = "#fcd34d";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+          e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+        }}
+      >
+        {language === 'en' ? '🇹🇭 ไทย' : '🇬🇧 EN'}
+      </button>
 
       {/* --- PHASE 1 & 2: INPUT & RESULT CARD --- */}
       {(view === 'input' || view === 'result') && (
         <div style={fullCenterStyle} className={isExiting ? "kin-card-exit" : "kin-card-entry"}>
           <header style={headerWrapperStyle(view)}>
-            <span style={labelStyle}>Sacred Timekeeper</span>
+            <span style={labelStyle}>{t.sacredTimekeeper}</span>
             <h1 style={{ ...titleStyle, fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-              <span style={{ fontSize: "0.6em", textShadow: "0 0 15px rgba(255, 255, 255, 0.4)" }}>Discover Your</span>
+              <span style={{ fontSize: "0.6em", textShadow: "0 0 15px rgba(255, 255, 255, 0.4)" }}>{t.discoverYour}</span>
               <br />
-              <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>Maya Spacetime Identity</span>
+              <span style={{ fontWeight: "600", color: "#fcd34d", textShadow: "0 0 20px rgba(252, 211, 77, 0.6)" }}>{t.mayaSpacetimeIdentity}</span>
             </h1>
-            <p className="desc-text" style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>In the Maya worldview, your birth date is not random. It carries a Tone and a Sign <br className="hide-on-small" />a unique energetic signature that shapes how you think, feel, and move through life.</p>
-            <p style={{ fontSize: "0.7rem", color: "rgba(255, 255, 255, 0.5)", letterSpacing: "3px", textTransform: "uppercase", marginTop: "15px" }}>Based on Maya Spacetime & Tzolk'in Calendar</p>
+            <p className="desc-text" style={{ ...descStyle, fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)", maxWidth: "min(95%, 700px)", lineHeight: "1.7" }}>{t.headerDesc}</p>
+            <p style={{ fontSize: "0.7rem", color: "rgba(255, 255, 255, 0.5)", letterSpacing: "3px", textTransform: "uppercase", marginTop: "15px" }}>{t.basedOn}</p>
             <div style={{ height: "1px", width: "60px", background: "rgba(252, 211, 77, 0.3)", margin: "10px auto 0" }} />
           </header>
 
@@ -119,20 +202,20 @@ export default function Page() {
             {/* FRONT CARD (INPUT) */}
             <div style={inputCardStyle}>
               <div style={{ display: "flex", gap: "25px", marginBottom: "30px", alignItems: "flex-end" }}>
-                <InputItem label="DAY" value={day} onChange={(val: string) => { setDay(val); setError(""); }} hint="DD" />
-                <InputItem label="MONTH" value={month} onChange={(val: string) => { setMonth(val); setError(""); }} hint="Select..." isMonth={true} />
-                <InputItem label="YEAR" value={year} onChange={(val: string) => { setYear(val); setError(""); }} hint="YYYY" />
+                <InputItem label={t.day} value={day} onChange={(val: string) => { setDay(val); setError(""); }} hint="DD" />
+                <InputItem label={t.month} value={month} onChange={(val: string) => { setMonth(val); setError(""); }} hint={t.selectMonth} isMonth={true} />
+                <InputItem label={t.year} value={year} onChange={(val: string) => { setYear(val); setError(""); }} hint="YYYY" />
               </div>
               <div style={{ height: "20px", marginBottom: "15px", textAlign: "center" }}>
                 {error && <p style={{ color: "#fca5a5", fontSize: "0.75rem", animation: "fadeIn 0.3s ease" }}>{error}</p>}
               </div>
-              <button onClick={handleReveal} style={buttonStyle} className="reveal-btn">REVEAL DESTINY</button>
+              <button onClick={handleReveal} style={buttonStyle} className="reveal-btn">{t.revealDestiny}</button>
             </div>
 
             {/* BACK CARD (IDENTITY) - ปรับให้อยู่กึ่งกลางหน้าจอ */}
             <div className="result-card-back" style={{ ...resultCardStyle, transform: "translate(-50%, -50%) rotateY(180deg)" }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", height: "100%", textAlign: "center", padding: "10px", gap: "15px" }}>
-                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "30px" }}>Cosmic Identity</span>
+                <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)", marginTop: "0px", marginBottom: "30px" }}>{t.cosmicIdentity}</span>
                 
                 {/* Maya Symbol Card */}
                 <div style={{position: "relative"}}>
@@ -152,15 +235,15 @@ export default function Page() {
                       margin: "10px 0",
                       textShadow: "0 0 25px rgba(252, 211, 77, 0.7), 0 0 10px rgba(252, 211, 77, 0.4)",
                       fontFamily: "'Cinzel', 'Georgia', serif",
-                    }}>{mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}` : 'Blue Electric Eagle'}</h4>
+                    }}>{mayanResult ? `${getTranslatedTone(mayanResult.tone.name, language)} ${getTranslatedSign(mayanResult.sign.name, language)}` : 'Blue Electric Eagle'}</h4>
                     <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "10px", fontSize: "clamp(0.85rem, 2vw, 1.4rem)" }}>
-                      {mayanResult ? `Tone ${mayanResult.toneNumber} | Sign: ${mayanResult.sign.name}` : 'Tone 3 | Sign: Eagle'}
+                      {mayanResult ? `${t.tone} ${mayanResult.toneNumber} | ${t.sign}: ${getTranslatedSign(mayanResult.sign.name, language)}` : `${t.tone} 3 | ${t.sign}: Eagle`}
                     </p>
                   </div>
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "15px", marginBottom: "5px", flexWrap: "wrap" }} className="result-buttons">
-                    <button onClick={handleReset} style={subButtonStyle}>New Date</button>
+                    <button onClick={handleReset} style={subButtonStyle}>{t.newDate}</button>
                     <button
                       onClick={handleToPrediction}
                       style={{
@@ -172,7 +255,7 @@ export default function Page() {
                       }}
                       className="predict-btn"
                     >
-                      View Full Reading →
+                      {t.viewFullReading}
                     </button>
                 </div>
               </div>
@@ -180,7 +263,7 @@ export default function Page() {
           </div>
 
           <footer style={footerWrapperStyle(view)}>
-            <div>🌙 20 Signs</div><div>🪐 13 Tones</div><div>✨ 260 Days</div>
+            <div>🌙 {t.signs}</div><div>🪐 {t.tones}</div><div>✨ {t.days}</div>
           </footer>
         </div>
       )}
@@ -238,7 +321,7 @@ export default function Page() {
               {/* Center - Empty space */}
             </div>
             <p style={{ marginTop: "30px", fontSize: "1.2rem", color: "#fcd34d", letterSpacing: "3px", animation: "pulse 1.5s ease-in-out infinite" }}>
-              Revealing your cosmic identity...
+              {t.revealing}
             </p>
           </div>
         </div>
@@ -263,10 +346,10 @@ export default function Page() {
         >
           <div style={{ textAlign: "center", marginBottom: "30px" }}>
             <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#fcd34d", marginBottom: "10px", fontFamily: "'Cinzel', serif" }}>
-              Your Life Path
+              {t.yourLifePath}
             </h2>
             <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)" }}>
-              How your Maya signature influences love and career
+              {t.lifePathDesc}
             </p>
           </div>
 
@@ -283,20 +366,24 @@ export default function Page() {
             )}
             <div style={{ marginTop: "20px", textAlign: "center" }}>
               <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
-                {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
+                {mayanResult ? `${getTranslatedTone(mayanResult.tone.name, language)} ${getTranslatedSign(mayanResult.sign.name, language)}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
               </h3>
             </div>
           </section>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", maxWidth: "1200px", width: "100%", justifyContent: "center", padding: "0 20px" }} className="prediction-cards-container">
             
-            <PredictionCard icon="❤️" title="LOVE DESTINY" color="#fca5a5">
-              {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love || 
+            <PredictionCard icon="❤️" title={t.loveDestiny} color="#fca5a5">
+              {mayanResult && (language === 'th' && WORK_LOVE_BY_SIGN_TH[mayanResult.sign.name] 
+                ? WORK_LOVE_BY_SIGN_TH[mayanResult.sign.name].love 
+                : WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.love) || 
                 "ความรักของ Blue Electric Eagle คือการมองหาความสัมพันธ์ที่ส่งเสริม \"วิสัยทัศน์\" คุณต้องการคู่ชีวิตที่เปรียบเสมือนปีกที่ช่วยให้คุณโบยบินไปสู่เป้าหมายที่สูงขึ้น..."}
             </PredictionCard>
 
-            <PredictionCard icon="💼" title="CAREER PATH" color="#7dd3fc">
-              {mayanResult && WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.work || 
+            <PredictionCard icon="💼" title={t.careerPath} color="#7dd3fc">
+              {mayanResult && (language === 'th' && WORK_LOVE_BY_SIGN_TH[mayanResult.sign.name] 
+                ? WORK_LOVE_BY_SIGN_TH[mayanResult.sign.name].work 
+                : WORK_LOVE_BY_SIGN[mayanResult.sign.name as keyof typeof WORK_LOVE_BY_SIGN]?.work) || 
                 "ในด้านการงาน คุณคือผู้วางกลยุทธ์จากมุมสูง Eagle มอบพลังในการมองเห็นภาพรวมและการวิเคราะห์ที่แม่นยำ คุณเหมาะกับการเป็นผู้นำทางความคิดหรือนักออกแบบอนาคต..."}
             </PredictionCard>
 
@@ -304,8 +391,8 @@ export default function Page() {
 
           {/* 💡 ปุ่มกลับไปหน้าแรก */}
           <footer style={{ marginTop: "40px", display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", width: "100%", padding: "0 20px" }}>
-            <button onClick={() => setView('cosmicMap')} style={{ ...resetFloatingBtn, minWidth: "220px", padding: "16px 20px" }}>← COSMIC MAP</button>
-            <button onClick={handleReset} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "220px", padding: "16px 20px" }}>NEW READING</button>
+            <button onClick={() => setView('cosmicMap')} style={{ ...resetFloatingBtn, minWidth: "220px", padding: "16px 20px" }}>{t.cosmicMap}</button>
+            <button onClick={handleReset} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "220px", padding: "16px 20px" }}>{t.newReading}</button>
           </footer>
         </div>
       )}
@@ -315,9 +402,9 @@ export default function Page() {
         <main style={cosmicMapOverlayStyle} className="cosmicMap-entry">
           <div style={{ paddingTop: "20px" }}>
           <header style={{ textAlign: "center", marginBottom: "30px", zIndex: 40 }}>
-            <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)" }}>MAYA SPACETIME DATE</span>
+            <span style={{ ...labelStyle, fontSize: "clamp(1rem, 3vw, 1.5rem)" }}>{t.mayaSpacetimeDate}</span>
             <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.7)", marginTop: "10px", maxWidth: "600px", margin: "10px auto 0" }}>
-              Your Tone shapes how you act. Your Sign defines who you are.
+              {t.cosmicMapDesc}
             </p>
           </header>
 
@@ -336,7 +423,7 @@ export default function Page() {
               )}
               <div style={{ marginTop: "30px", textAlign: "center" }}>
                 <h3 style={{ color: "#fcd34d", fontSize: "clamp(1.2rem, 3vw, 1.8rem)", margin: "5px 0", letterSpacing: "2px", fontFamily: "'Cinzel', serif" }}>
-                  {mayanResult ? `${mayanResult.tone.name} ${mayanResult.sign.name}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
+                  {mayanResult ? `${getTranslatedTone(mayanResult.tone.name, language)} ${getTranslatedSign(mayanResult.sign.name, language)}`.toUpperCase() : 'BLUE ELECTRIC EAGLE'}
                 </h3>
               </div>
             </section>
@@ -345,20 +432,20 @@ export default function Page() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(20px, 5vw, 50px)", width: "100%", maxWidth: "1200px", justifyContent: "center", padding: "0 20px" }} className="cosmicMap-cards-container">
               <div style={{ flex: "1 1 400px", maxWidth: "600px", display: "flex" }}>
                 <DashboardColumn
-                  title="GALAXY TONE"
+                  title={t.galaxyTone}
                   icon="🌀"
                   color="#7dd3fc"
-                  desc={mayanResult ? generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).tone : "พลังงานลำดับที่ 13 บอกวิธีขับเคลื่อนชีวิตของคุณในจักรวาล พลังแห่งการแผ่ขยายและการบรรลุจุดสูงสุดของรอบเวลา..."}
+                  desc={mayanResult ? (language === 'th' ? generateMayanNarrativeTh(mayanResult.toneNumber, mayanResult.sign).tone : generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).tone) : "พลังงานลำดับที่ 13 บอกวิธีขับเคลื่อนชีวิตของคุณในจักรวาล พลังแห่งการแผ่ขยายและการบรรลุจุดสูงสุดของรอบเวลา..."}
                   highlightRules={getHighlightRules()}
                 />
               </div>
 
               <div style={{ flex: "1 1 400px", maxWidth: "600px", display: "flex" }}>
                 <DashboardColumn
-                  title="NAWAL SIGN"
+                  title={t.nawalSign}
                   icon="🦅"
                   color="#fcd34d"
-                  desc={mayanResult ? generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).sign : "สัญลักษณ์ประจำวัน 20 นาวาล คือจิตวิญญาณดั้งเดิมที่บอกถึงตัวตนของคุณ Eagle คือผู้มองเห็นวิสัยทัศน์จากมุมสูง..."}
+                  desc={mayanResult ? (language === 'th' ? generateMayanNarrativeTh(mayanResult.toneNumber, mayanResult.sign).sign : generateMayanNarrative(mayanResult.toneNumber, mayanResult.sign).sign) : "สัญลักษณ์ประจำวัน 20 นาวาล คือจิตวิญญาณดั้งเดิมที่บอกถึงตัวตนของคุณ Eagle คือผู้มองเห็นวิสัยทัศน์จากมุมสูง..."}
                   highlightRules={getHighlightRules()}
                 />
               </div>
@@ -378,7 +465,7 @@ export default function Page() {
             width: "100%"
           }}>
             <button onClick={handleToCosmicMap} style={{ ...resetFloatingBtn, borderColor: "#fcd34d", color: "#fcd34d", minWidth: "260px", padding: "16px 20px" }}>
-              LOVE & CAREER →
+              {t.loveCareer}
             </button>
             
             <button 
@@ -394,7 +481,7 @@ export default function Page() {
                 textUnderlineOffset: "6px"
               }}
             >
-              START NEW DESTINY
+              {t.startNewDestiny}
             </button>
           </footer>
           </div>
@@ -656,6 +743,7 @@ export default function Page() {
 
 // --- Sub-Components ---
 function InputItem({ label, value, onChange, hint, isMonth = false }: any) {
+  const isYear = label.toUpperCase().includes('YEAR') || label.includes('ปี');
   return (
     <div style={{ flex: 1, minWidth: 0, textAlign: "center" }}>
       <label style={{ display: "block", fontSize: "1rem", color: "rgba(125, 211, 252, 0.5)", marginBottom: "10px", letterSpacing: "2px", fontWeight: "bold" }}>{label}</label>
@@ -665,7 +753,7 @@ function InputItem({ label, value, onChange, hint, isMonth = false }: any) {
           {Array.from({ length: 12 }, (_, i) => (<option key={i + 1} value={i + 1} style={{ color: "#000" }}>{new Date(0, i).toLocaleString('en', { month: 'short' })}</option>))}
         </select>
       ) : (
-        <input type="text" maxLength={label === "YEAR" ? 4 : 2} value={value} onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))} placeholder={hint} style={inputStyle} />
+        <input type="text" maxLength={isYear ? 4 : 2} value={value} onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))} placeholder={hint} style={inputStyle} />
       )}
     </div>
   );
